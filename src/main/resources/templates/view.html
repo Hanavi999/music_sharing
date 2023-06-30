@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>view</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+    * {
+        font-family: "Nanum Gothic";
+    }
+
+    .header {
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+        position: fixed;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+    }
+
+    .img-logo {
+        width: 60px;
+    }
+
+    .write {
+        margin-right: 10px;
+        text-decoration: none;
+        background-color: #102030;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 20px;
+    }
+
+    .fake-header {
+        width: 100%;
+        height: 50px;
+        margin-bottom: 30px;
+        background-color: #fff;
+    }
+
+    .viewContainer {
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        padding: 0px 2%;
+        align-items: center;
+    }
+
+    .info-box {
+        width: 320px;
+        height: 400px;
+        padding: 50px 15px;
+        border-radius: 10px;
+        background-color: #f2f2f2;
+    }
+
+    .box-video {
+        width: 1000px;
+        height: 500px;
+        border: none;
+        border-radius: 10px;
+    }
+
+    .song {
+        font-size: 20px;
+    }
+
+    .writer {
+        font-size: 15px;
+    }
+
+    .postForm {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .chat-input {
+        width: 900px;
+        height: 40px;
+        margin-right: 20px;
+        border: none;
+        border-bottom: 1px solid #000;
+    }
+
+    .chat-submit {
+        width: 75px;
+        height: 35px;
+        border-radius: 10px;
+        background-color: #102030;
+        border: none;
+        color: #fff;
+    }
+
+    .chating-box {
+        margin-top: 20px;
+    }
+
+    .chating-box-top {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+
+    .cht-bx-tp-year {
+        color: #888;
+        font-size: 13px;
+        margin-left: 10px;
+    }
+
+    .chating-box p{
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+    }
+
+    .chats-box {
+        padding-left: 2%;
+    }
+
+    .viewAndTime {
+        display: flex;
+        justify-content: left;
+        align-items: center;
+    }
+
+
+    .time {
+        color: #888;
+        margin-left: 10px;
+    }
+
+</style>
+<body>
+<header class="header">
+    <img th:src="@{https://media.istockphoto.com/id/1244097573/ko/%EB%B2%A1%ED%84%B0/%EC%9D%8C%ED%8C%8C%EA%B0%80-%EC%9E%88%EB%8A%94-%EC%B5%9C%EC%86%8C%ED%95%9C%EC%9D%98-%ED%97%A4%EB%93%9C%ED%8F%B0-%EC%95%84%EC%9D%B4%EC%BD%98.jpg?s=612x612&w=0&k=20&c=4EIhNi1jIpngsgvPtypVsGUmjkYTMEBMC0LOlOH8NPM=}" class="img-logo">
+    <div></div>
+    <a href="/main" class="write">돌아가기</a>
+</header>
+<div class="fake-header"></div>
+<main>
+    <div id="viewContainer" class="viewContainer">
+
+    </div>
+</main>
+<div class="chats-box">
+    <form id="postForm" class="postForm">
+        <input type="text" name="chat" placeholder="댓글을 입력해주세요" id="chat" class="chat-input">
+        <input type="submit" value="등록" class="chat-submit">
+    </form>
+    <div id="chats-box-chats" class="chats-box-chats"></div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var url = window.location.href.split('view/');
+        var number = url[1];
+        var boardNum = "";
+        $.ajax({
+            url: '/api/view/' + number,
+            type: 'GET',
+            success: function (res) {
+                let view = res;
+                let viewContainer = $('#viewContainer');
+                let chatBox = $('#postForm');
+                let link = res.link.substring(32);
+                let genres = [];
+                boardNum = number;
+                $.ajax({
+                    url: '/api/genres/' + number,
+                    type: 'GET',
+                    success: function (response) {
+                        for(var i = 0; i < 3; i++) {
+                                if(response[i] !== undefined) {
+                                    genres.push(response[i].genre);
+                                }
+                            }
+                        var item =
+                            '<iframe src="https://www.youtube.com/embed/' + link + '" class="box-video"></iframe>' +
+                            '<div class="info-box">' +
+                            '<p class="song"><b>' + res.song + '</b></p>' +
+                            '<p> 가수 - ' + res.singer + '</p>' +
+                            '<div class="genres"><b>장르</b>';
+
+                        for(var i = 0; i < 3; i++) {
+                            if(genres[i] !== undefined) {
+                                item = item + '<p> - ' + genres[i] + '</p>'
+                            }
+                        }
+
+                        item = item
+                            + '</div>'
+                            + '<p><b>설명</b></p>'
+                            + '<p>' + res.info + '</p>'
+                            + '<p class="writer">글쓴이 - ' + res.nickname + '</p>';
+
+                        $.ajax({
+                            url: '/api/view/time/' + number,
+                            type: 'GET',
+                            success: function (respon) {
+                                item = item
+                                    + '<div class="viewAndTime">'
+                                    + '<p class="view"><b>조회수 ' + res.view  + '회</b></p>'
+                                    + '<p class="time">' + respon + '</p>'
+                                    + '</div>'
+                                    + '</div>';
+                                console.log(item);
+                                viewContainer.append(item);
+                            }
+                        })
+
+                        var chat = '<input type="hidden" class="chats-box-id" id="boardId" value="' + res.id + '">';
+                        chatBox.append(chat);
+
+                        }
+                })
+
+                $.ajax({
+                    url: '/api/chats/view/' + number,
+                    type: 'GET',
+                    success: function (res) {
+                        let chatsBox = $('#chats-box-chats');
+                        let list = res;
+                        let item = "";
+                        $.ajax({
+                            url: '/api/chat/time/' + number,
+                            type: 'GET',
+                            success: function (respon) {
+                                for(let i = list.length; i > 0; i--) {
+                                    console.log(i);
+                                    item = item + '<div class="chating-box">'
+                                        + '<div class="chating-box-top">'
+                                        + '<p><b>' + list[i-1].nickname + '</b></p>'
+                                        + '<p class="cht-bx-tp-year">' + respon[i-1] +'</p>'
+                                        + '</div>'
+                                        + '<p>' + list[i-1].chat + '</p>'
+                                        + '</div>';
+                                }
+                                chatsBox.append(item);
+                            }
+                        })
+                    }
+                })
+
+            }
+        })
+
+        $('#postForm').submit(function (event) {
+            event.preventDefault();
+
+            var chat = $('#chat').val();
+            var boardId = $('#boardId').val();
+
+            $.ajax({
+                url: '/api/chats/write',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    chat: chat,
+                    boardId, boardId
+                }),
+                success: function (res) {
+                    window.location.assign("/view/" + boardId);
+                }
+            })
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>register</title>
+</head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+  * {
+    font-family: "Nanum Gothic";
+  }
+
+  .login-form {
+    width: 450px;
+    height: 250px;
+    margin: auto;
+    color: #fff;
+    margin-top: 50px;
+    padding:10px 20px;
+    border-radius: 5px;
+  }
+
+  .login-form-entity {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .idPw {
+    width: 400px;
+    height: 45px;
+    border: none;
+    border-radius: 5px;
+    padding-left: 10px;
+    border: 1px solid #000;
+  }
+
+  .login-form-box {
+    width: 410px;
+    height: 45px;
+    border: none;
+    text-align: center;
+    background-color: #102030;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 5px;
+  }
+
+  .regi {
+    text-align: center;
+    text-decoration: underline;
+    color: gray;
+  }
+
+  .img-div {
+    width: 450px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .img-logo {
+    width: 180px;
+  }
+</style>
+<body>
+<div class="login-form">
+  <div class="img-div">
+    <img th:src="@{https://media.istockphoto.com/id/1244097573/ko/%EB%B2%A1%ED%84%B0/%EC%9D%8C%ED%8C%8C%EA%B0%80-%EC%9E%88%EB%8A%94-%EC%B5%9C%EC%86%8C%ED%95%9C%EC%9D%98-%ED%97%A4%EB%93%9C%ED%8F%B0-%EC%95%84%EC%9D%B4%EC%BD%98.jpg?s=612x612&w=0&k=20&c=4EIhNi1jIpngsgvPtypVsGUmjkYTMEBMC0LOlOH8NPM=}" class="img-logo">
+  </div>
+  <form method="post" action="/registerOk">
+    <div class="login-form-entity">
+      <input class="idPw" type="text" name="username" placeholder="아이디">
+    </div>
+    <div class="login-form-entity">
+      <input class="idPw" type="password" name="password" placeholder="비밀번호">
+    </div>
+    <div class="login-form-entity">
+      <input class="idPw" type="text" name="nickname" placeholder="닉네임">
+    </div>
+    <div class="login-form-entity">
+      <input class="login-form-box" type="submit" value="회원가입">
+    </div>
+  </form>
+  <div class="login-form-entity">
+    <a class="regi" href="/login">돌아가기</a>
+  </div>
+</div>
+</body>
+</html>

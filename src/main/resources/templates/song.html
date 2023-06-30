@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>song</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+    * {
+        font-family: "Nanum Gothic";
+    }
+
+    .header {
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+        position: fixed;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+    }
+
+    .selectOption {
+        width: 100px;
+        height: 40px;
+        padding: 0px 30px;
+        border: none;
+        border-radius: 20px;
+        background-color: #102030;
+        color: white;
+    }
+
+    .search {
+        width: 550px;
+        height: 40px;
+        padding: 0px 30px;
+        border-radius: 20px;
+        border: 1px solid #000;
+    }
+
+    .src-btn {
+        width: 60px;
+        height: 40px;
+        border-radius:20px;
+        border: none;
+        background-color: #102030;
+        color: white;
+    }
+
+    .img-logo {
+        width: 60px;
+    }
+
+    .write {
+        margin-right: 10px;
+        text-decoration: none;
+        background-color: #102030;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 20px;
+    }
+
+    .fake-header {
+        width: 100%;
+        height: 50px;
+        background-color: #ffffff;
+    }
+
+    .line-bx {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .box {
+        margin-top: 30px;
+        width: 360px;
+        height: 270px;
+        text-decoration: none;
+    }
+
+    .box-img {
+        width: 360px;
+        height: 200px;
+        border-radius: 10px;
+    }
+
+    .box-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px 5px;
+        color: black;
+        text-decoration: none;
+    }
+
+    .box-song {
+        text-decoration: none;
+    }
+
+    .box-singer {
+        text-decoration: none;
+    }
+
+    .box-link {
+        text-decoration: none;
+    }
+
+    .box-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0px 5px;
+    }
+
+    .box-foot p {
+        font-size: 13px;
+        margin: 0;
+        padding: 0;
+        color: #000;
+    }
+
+</style>
+<body>
+<header class="header">
+    <img th:src="@{https://media.istockphoto.com/id/1244097573/ko/%EB%B2%A1%ED%84%B0/%EC%9D%8C%ED%8C%8C%EA%B0%80-%EC%9E%88%EB%8A%94-%EC%B5%9C%EC%86%8C%ED%95%9C%EC%9D%98-%ED%97%A4%EB%93%9C%ED%8F%B0-%EC%95%84%EC%9D%B4%EC%BD%98.jpg?s=612x612&w=0&k=20&c=4EIhNi1jIpngsgvPtypVsGUmjkYTMEBMC0LOlOH8NPM=}" class="img-logo">
+    <form id="searchForm">
+        <select id="selectOption" class="selectOption">
+            <option value="singer">가수명</option>
+            <option selected value="song">노래명</option>
+        </select>
+        <input type="text" class="search" id="search">
+        <input type="submit" value="검색" class="src-btn">
+    </form>
+    <a href="/write" class="write">업로드</a>
+</header>
+<div class="fake-header"></div>
+<main>
+    <ul id="listContainer" class="listContainer">
+
+    </ul>
+</main>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let fullUrl = window.location.href;
+        let url = fullUrl.substring(32);
+        $.ajax({
+            url: '/api/boards/view/song/' + url,
+            type: 'GET',
+            success: function (res) {
+                var list = res;
+
+                var cnt = 1;
+                var listContainer = $("#listContainer");
+                var item = "";
+                $.ajax({
+                    url: '/api/boards/view/song/year/' + url,
+                    type: 'GET',
+                    success: function (response) {
+                        for(var i = 0; i < list.length; i++) {
+                            var link = list[i].link.substring(32);
+                            var pic = "https://img.youtube.com/vi/"+ link +"/0.jpg";
+                            if(cnt == 1) {
+                                item = '<div class="line-bx">';
+                            }
+                            var item = item
+                                + '<a href="/view/' + list[i].id + '" class="box-link">'
+                                + '<div class="box">'
+                                + '<img src="'+ pic +'" class="box-img">'
+                                + '<div class="box-info">'
+                                + '<p class="box-song"> <b>' + list[i].song + '</b> </p>'
+                                + '<p class="box-singer">' + list[i].singer + '</p>'
+                                + '</div>'
+                                + '<div class="box-foot">'
+                                + '<p class="box-view">조회수 ' + list[i].view + '회</p>'
+                                + '<p class="box-year">' + response[i] +'</p>'
+                                + '</div> '
+                                + '</div> </a>';
+                            if(cnt == 3) {
+                                item = item + '</div>';
+                                listContainer.append(item);
+                                item = "";
+                                cnt = 1;
+                            } else if(i == list.length -1) {
+                                item = item + '</div>';
+                                listContainer.append(item);
+                            }
+                            else {
+                                cnt++;
+                            }
+                        }
+                    }
+                })
+            },
+            error: function (xhr, status, error) {
+                console.error('리스트를 가져오는데 문제가 발생했습니다', error);
+            }
+        })
+        $("#searchForm").submit(function (event) {
+            event.preventDefault();
+            let select = $('#selectOption').val();
+            let search = $('#search').val();
+            if(select == "singer") {
+                window.location.href = "/main/singer/" + search;
+            } else {
+                window.location.href = "/main/song/" + search;
+            }
+
+        })
+    })
+</script>
+</html>

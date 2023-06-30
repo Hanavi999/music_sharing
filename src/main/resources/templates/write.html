@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>write</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+    * {
+        font-family: "Nanum Gothic";
+    }
+
+    .header {
+        width: 100%;
+        left: 0;
+        right: 0;
+        top: 0;
+        position: fixed;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search {
+        width: 550px;
+        height: 40px;
+        padding: 0px 30px;
+        border-radius: 20px;
+        border: 1px solid #000;
+    }
+
+    .src-btn {
+        width: 60px;
+        height: 40px;
+        border-radius:20px;
+        border: none;
+        background-color: #102030;
+        color: white;
+    }
+
+    .img-logo {
+        width: 60px;
+    }
+
+    .write {
+        margin-right: 10px;
+        text-decoration: none;
+        background-color: #102030;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 20px;
+    }
+
+    .fake-header {
+        width: 100%;
+        height: 50px;
+    }
+
+    .postForm {
+        width: 400px;
+        height: 500px;
+        margin: auto;
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-inpt {
+        margin-bottom: 20px;
+        height: 45px;
+        border: none;
+        border-radius: 5px;
+        padding-left: 10px;
+        border: 1px solid #000;
+
+    }
+
+    .form-area {
+        margin-bottom: 20px;
+        height: 100px;
+        border: none;
+        resize: none;
+        padding-top: 10px;
+        border-radius: 5px;
+        padding-left: 10px;
+        border: 1px solid #000;
+    }
+
+    .write-head {
+        text-align: center;
+    }
+
+    .form-sub {
+        width: 400px;
+        height: 45px;
+        border: none;
+        text-align: center;
+        background-color: #102030;
+        color: #fff;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+
+</style>
+<body>
+    <header class="header">
+        <img th:src="@{https://media.istockphoto.com/id/1244097573/ko/%EB%B2%A1%ED%84%B0/%EC%9D%8C%ED%8C%8C%EA%B0%80-%EC%9E%88%EB%8A%94-%EC%B5%9C%EC%86%8C%ED%95%9C%EC%9D%98-%ED%97%A4%EB%93%9C%ED%8F%B0-%EC%95%84%EC%9D%B4%EC%BD%98.jpg?s=612x612&w=0&k=20&c=4EIhNi1jIpngsgvPtypVsGUmjkYTMEBMC0LOlOH8NPM=}" class="img-logo">
+        <div></div>
+        <a href="/main" class="write">돌아가기</a>
+    </header>
+    <div class="fake-header"></div>
+    <h2 class="write-head">글 작성</h2>
+    <form id="postForm" class="postForm">
+        <input type="text" class="form-inpt" id="song" name="song" placeholder="노래 제목">
+        <input type="text" class="form-inpt" id="singer" name="singer" placeholder="가수명">
+        <input type="text" class="form-inpt" id="genre1" name="genres" placeholder="장르1">
+        <input type="text" class="form-inpt" id="genre2" name="genres" placeholder="장르2">
+        <input type="text" class="form-inpt" id="genre3" name="genres" placeholder="장르3">
+        <input type="text" class="form-inpt" id="link" name="link" placeholder="링크">
+        <textarea name="info" class="form-area" id="info" placeholder="설명"></textarea>
+        <button class="form-sub" type="submit">등록</button>
+    </form>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#postForm').submit(function (event) {
+            event.preventDefault();
+
+            var song = $('#song').val();
+            var singer = $('#singer').val();
+            var genre1 = $('#genre1').val();
+            var genre2 = $('#genre2').val();
+            var genre3 = $('#genre3').val();
+            var info = $('#info').val();
+            var link = $('#link').val();
+
+            var genres = [];
+
+            if(!genre1 == "") {
+                genres.push(genre1);
+            }
+
+            if(!genre2 == "") {
+                genres.push(genre2);
+            }
+
+            if(!genre2 == "") {
+                genres.push(genre3);
+            }
+
+
+            $.ajax({
+                url: '/api/write',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    song: song,
+                    singer: singer,
+                    genres: genres,
+                    info: info,
+                    link: link
+                }),
+                success: function (res) {
+                    console.log('게시글 저장 성공');
+                    window.location.assign("/main");
+                },
+                error: function (xhr, status, error) {
+                    console.error('실패', error);
+                    console.log(song, singer, genres, info, link);
+                }
+            })
+
+        })
+    })
+</script>
+</html>
